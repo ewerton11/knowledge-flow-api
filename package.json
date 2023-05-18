@@ -1,0 +1,27 @@
+{
+  "name": "knowledge-flow-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "start": "ts-node dist/server.js",
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ewerton",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^4.14.0",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "prisma": "^4.14.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.13",
+    "@types/eslint": "^8.37.0",
+    "@types/express": "^4.17.17",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.0.4"
+  }
+}
