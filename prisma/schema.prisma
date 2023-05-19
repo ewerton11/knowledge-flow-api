@@ -11,9 +11,9 @@ datasource db {
 }
 
 model Topic {
-  id          Int      @id @default(autoincrement())
+  id          Int     @id @default(autoincrement())
   title       String
   parentId    Int?
-  parentTopic Topic?   @relation("ChildTopics", fields: [parentId], references: [id])
-  childTopics Topic[]  @relation("ChildTopics")
+  parentTopic Topic?  @relation("ChildTopics", fields: [parentId], references: [id])
+  childTopics Topic[] @relation("ChildTopics")
 }
