@@ -16,6 +16,26 @@ class HomeController {
     }
   }
 
+  async getTopicsId(req: Request, res: Response) {
+    const topicId = parseInt(req.params.id)
+
+    try {
+      const topic = await prisma.topic.findUnique({
+        where: {
+          id: topicId,
+        },
+      })
+
+      if (topic) {
+        res.status(200).json(topic)
+      } else {
+        res.status(404).json({ error: 'Topic not found' })
+      }
+    } catch (error) {
+      res.status(500).json({ error: 'Internal server error' })
+    }
+  }
+
   async createTopic(req: Request, res: Response) {
     try {
       const { title, parentId } = req.body
@@ -35,6 +55,36 @@ class HomeController {
         .json({ error: 'An error occurred while creating the topic.' })
     }
   }
+
+  // async createChildTopic(req: Request, res: Response) {
+  //   try {
+  //     const { title, parentId } = req.body
+
+  //     const parentTopic = await prisma.topic.findUnique({
+  //       where: {
+  //         id: parentId,
+  //       },
+  //     })
+
+  //     if (parentTopic) {
+  //       const newChildTopic = await prisma.topic.create({
+  //         data: {
+  //           title: title,
+  //           parentId: parentId,
+  //         },
+  //       })
+
+  //       res.status(201).json(newChildTopic)
+  //     } else {
+  //       res.status(404).json({ error: 'Parent topic not found' })
+  //     }
+  //   } catch (error) {
+  //     console.error('Error creating child topic:', error)
+  //     res
+  //       .status(500)
+  //       .json({ error: 'An error occurred while creating the child topic.' })
+  //   }
+  // }
 }
 
 export default new HomeController()
