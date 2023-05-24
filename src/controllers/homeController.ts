@@ -6,17 +6,51 @@ const prisma = new PrismaClient()
 class HomeController {
   async getTopics(req: Request, res: Response) {
     try {
-      const topics = await prisma.topic.findMany()
-      res.json(topics)
+      const topics = await prisma.topic.findMany({
+        where: {
+          parentId: null, // Filtra apenas os tópicos pai (sem parentId)
+        },
+      })
+
+      return res.json(topics)
     } catch (error) {
       console.error('Error fetching topics:', error)
-      res
+      return res
         .status(500)
         .json({ error: 'An error occurred while fetching topics.' })
     }
   }
 
+  async getChildTopics(req: Request, res: Response) {
+    const topicId = parseInt(req.params.id)
+
+    try {
+      const parentTopic = await prisma.topic.findUnique({
+        where: {
+          id: topicId,
+        },
+        include: {
+          childTopics: true,
+        },
+      })
+
+      if (!parentTopic) {
+        return res.status(404).json({ error: 'Parent topic not found' })
+      }
+
+      const childTopics = parentTopic.childTopics
+
+      res.status(200).json(childTopics)
+    } catch (error) {
+      console.error('Error fetching child topics:', error)
+      return res
+        .status(500)
+        .json({ error: 'An error occurred while fetching child topics.' })
+    }
+  }
+
   async getTopicsId(req: Request, res: Response) {
+    //Busca os topicos, porem como vai começar com valor vazio, retornará todos
     const topicId = parseInt(req.params.id)
 
     try {
@@ -26,11 +60,11 @@ class HomeController {
         },
       })
 
-      if (topic) {
-        res.status(200).json(topic)
-      } else {
-        res.status(404).json({ error: 'Topic not found' })
+      if (!topic) {
+        return res.status(404).json({ error: 'Topic not found' })
       }
+
+      return res.status(200).json(topic)
     } catch (error) {
       res.status(500).json({ error: 'Internal server error' })
     }
@@ -56,35 +90,35 @@ class HomeController {
     }
   }
 
-  // async createChildTopic(req: Request, res: Response) {
-  //   try {
-  //     const { title, parentId } = req.body
+  async createChildTopic(req: Request, res: Response) {
+    try {
+      const { title, parentId } = req.body
 
-  //     const parentTopic = await prisma.topic.findUnique({
-  //       where: {
-  //         id: parentId,
-  //       },
-  //     })
+      const parentTopic = await prisma.topic.findUnique({
+        where: {
+          id: parentId,
+        },
+      })
 
-  //     if (parentTopic) {
-  //       const newChildTopic = await prisma.topic.create({
-  //         data: {
-  //           title: title,
-  //           parentId: parentId,
-  //         },
-  //       })
+      if (parentTopic) {
+        const newChildTopic = await prisma.topic.create({
+          data: {
+            title: title,
+            parentId: parentId,
+          },
+        })
 
-  //       res.status(201).json(newChildTopic)
-  //     } else {
-  //       res.status(404).json({ error: 'Parent topic not found' })
-  //     }
-  //   } catch (error) {
-  //     console.error('Error creating child topic:', error)
-  //     res
-  //       .status(500)
-  //       .json({ error: 'An error occurred while creating the child topic.' })
-  //   }
-  // }
+        res.status(201).json(newChildTopic)
+      } else {
+        res.status(404).json({ error: 'Parent topic not found' })
+      }
+    } catch (error) {
+      console.error('Error creating child topic:', error)
+      res
+        .status(500)
+        .json({ error: 'An error occurred while creating the child topic.' })
+    }
+  }
 }
 
 export default new HomeController()
