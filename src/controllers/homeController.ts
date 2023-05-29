@@ -110,7 +110,14 @@ class HomeController {
 
         res.status(201).json(newChildTopic)
       } else {
-        res.status(404).json({ error: 'Parent topic not found' })
+        const newTopic = await prisma.topic.create({
+          data: {
+            title,
+            parentId,
+          },
+        })
+
+        res.status(201).json(newTopic)
       }
     } catch (error) {
       console.error('Error creating child topic:', error)
