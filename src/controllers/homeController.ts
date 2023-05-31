@@ -78,6 +78,8 @@ class HomeController {
         data: {
           title,
           parentId,
+          createdAt: new Date(),
+          isChecked: false,
         },
       })
 
@@ -103,21 +105,16 @@ class HomeController {
       if (parentTopic) {
         const newChildTopic = await prisma.topic.create({
           data: {
-            title: title,
-            parentId: parentId,
+            title,
+            parentId,
+            createdAt: new Date(),
+            isChecked: false,
           },
         })
 
         res.status(201).json(newChildTopic)
       } else {
-        const newTopic = await prisma.topic.create({
-          data: {
-            title,
-            parentId,
-          },
-        })
-
-        res.status(201).json(newTopic)
+        throw new Error('Parent topic not found.')
       }
     } catch (error) {
       console.error('Error creating child topic:', error)
