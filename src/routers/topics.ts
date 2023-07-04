@@ -8,6 +8,7 @@ router.post('/topics/create/topic', topicController.createTopic)
 router.get('/topics', topicController.getTopics)
 router.get('/topics/:id', topicController.getTopicsId)
 router.put('/topics/:id', topicController.updateTopic)
+router.put('/topics/:id/check', topicController.updateCheckedStatus)
 router.delete('/topics/:id', topicController.deleteTopic)
 
 router.post('/topics/create/child-topic', childTopicController.createChildTopic)
