@@ -90,28 +90,6 @@ class TopicController {
     }
   }
 
-  async deleteTopic(req: Request, res: Response) {
-    const topicId = parseInt(req.params.id)
-
-    try {
-      const deletedTopic = await prisma.topic.delete({
-        where: {
-          id: topicId,
-        },
-      })
-
-      return res.json({
-        message: 'Topic deleted successfully',
-        topic: deletedTopic,
-      })
-    } catch (error) {
-      console.error('Error deleting topic:', error)
-      return res
-        .status(500)
-        .json({ error: 'An error occurred while deleting the topic.' })
-    }
-  }
-
   async updateCheckedStatus(req: Request, res: Response) {
     try {
       const topicId = parseInt(req.params.id)
@@ -144,6 +122,28 @@ class TopicController {
     } catch (error) {
       console.error('Error updating status of isChecked:', error)
       res.status(500).json({ message: 'Error updating isChecked status' })
+    }
+  }
+
+  async deleteTopic(req: Request, res: Response) {
+    const topicId = parseInt(req.params.id)
+
+    try {
+      const deletedTopic = await prisma.topic.delete({
+        where: {
+          id: topicId,
+        },
+      })
+
+      return res.json({
+        message: 'Topic deleted successfully',
+        topic: deletedTopic,
+      })
+    } catch (error) {
+      console.error('Error deleting topic:', error)
+      return res
+        .status(500)
+        .json({ error: 'An error occurred while deleting the topic.' })
     }
   }
 }
